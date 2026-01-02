@@ -13,3 +13,18 @@ console.log("The name of this project owner is:"+(name+surname));
 
 let arr = ["1", "Val2", 2 ];
 console.log("Value in array position 0 and 2 are " +arr[0],arr[2])
+
+//Express
+
+const app = require("express")();
+//Alternative
+//const express = require("express");
+//const app = express(); 
+
+app.get("./",(req,res)=>{
+    res.send("Hello I'm from the home page.");
+});
+
+app.listen(3000,(req,res)=>{
+    console.log("NodeJs has started at port 3000");
+})
