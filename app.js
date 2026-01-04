@@ -21,9 +21,26 @@ const app = require("express")();
 //const express = require("express");
 //const app = express(); 
 
-app.get("./",(req,res)=>{
-    res.send("Hello I'm from the home page.");
+app.get("/",(req,res)=>{
+    //res.send("<h1>Hello I'm from the home page.</h1>");
+    res.json({
+        message:"Hello I'm from the JSON page."
+    })
 });
+
+app.get("/contact",(req,res)=>{
+    //res.send("I'm the contact page.");
+    res.json({
+        message:"I'm from the contact page."
+    })
+});
+
+app.get("/about",(req,res)=>{
+    //res.send("I'm the about page.");
+    res.json({
+        message:"I'm from the about page"
+    })
+})
 
 app.listen(3000,(req,res)=>{
     console.log("NodeJs has started at port 3000");
