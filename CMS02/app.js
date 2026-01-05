@@ -1,4 +1,12 @@
 const app = require("express")();
+const mongoose = require("mongoose")
+
+//connecting to database
+
+mongoose.connect("mongodb+srv://Root:password*%23@cluster0.2nvsf5h.mongodb.net/?appName=Cluster0")
+.then(()=>{
+    console.log("Database connected sucessfully!!");
+})
 
 
 app.get("/",(req,res)=>{
