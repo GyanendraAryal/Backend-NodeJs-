@@ -1,14 +1,9 @@
 const app = require("express")();
-const mongoose = require("mongoose")
+const { connectDatabase } = require("./database/database");
+//DATABASE CONNECTION FUNCTION
+connectDatabase();
 
-//connecting to database
-
-mongoose.connect("mongodb+srv://Root:password*%23@cluster0.2nvsf5h.mongodb.net/?appName=Cluster0")
-.then(()=>{
-    console.log("Database connected sucessfully!!");
-})
-
-
+//GEt API
 app.get("/",(req,res)=>{
     res.json({
         status:"200 OK",
