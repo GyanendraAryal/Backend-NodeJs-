@@ -1,0 +1,18 @@
+#Today in this lesson
+#REST API - JSON
+
+GET /api/users - List all users - Doneee
+
+
+GET /api/users/1 - Get the user with the ID 1 - Dynamic path parameters
+GET /api/users/:id *=( :id indicates a dynamic value i.e variable)
+
+GET /api/users/2 - Get the user with the ID 2 - Dynamic path parameters
+GET /api/users/:id *=( :id indicates a dynamic value i.e variable)
+
+
+POST /api/users - Create new user
+
+PATCH /api/users/1 - Edit the user with ID 1
+
+DELETE /api/users/1 - Delete the use with ID 1
