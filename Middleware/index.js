@@ -10,13 +10,15 @@ app.use(express.urlencoded({ extended: false }));//It allows your server to read
 
 app.use((req,res, next) =>{
     console.log("Hello from Middleware 1");
-    res.end("Hello from middleware");
+    req.Nameee="Gyanendra"
+    /* res.end("Hello from middleware"); */
     next();
     
 })
 
 app.get("/", (req, res) => {
-    return res.send("Hello I'm from the Home Page!");
+    console.log("Hello I'm from the Home Page!");   
+    console.log(req.Nameee)
 })
 
 app.get("/users", (req, res) => {
