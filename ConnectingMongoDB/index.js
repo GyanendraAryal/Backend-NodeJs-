@@ -13,8 +13,8 @@ app.get("/", (req, res) => {
 })
 
 app.get("/api/users/:id", (req, res) => {
-    const id = Number(req.params.id);
-    const user = users.find((users) => users.id === id)
+    /* const id = Number(req.params.id);
+    const user = users.find((users) => users.id === id) */
     const html =`
     <ul>
         ${users.map((users) => {
