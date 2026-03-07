@@ -3,7 +3,27 @@ import ApiError from "../utils/ApiError.js"
 import User from "../models/User.js";
 import uploadOnCloudinary from "../utils/cloudinary.js"
 import ApiResponse from "../utils/ApiResponse.js"
+import generateAccessToken from "../models/User.js";
+import generateRefreshToken from "../models/User.js";
 
+
+const generateAccessAndRefreshTokens = async (userId) => {
+    try {
+        const user = await User.findById(userId);
+        const accesstoken = user.generateAccessToken();
+        const refreshtoken = user.generateRefreshToken();
+
+        user.refreshToken = refreshToken
+        await user.save({ validateBeforeSave: false })
+
+        return { accesstoken, refreshtoken };
+
+    } catch (error) {
+
+        throw new ApiError(500,
+            "Something went wrong while generating refresh and access token!!")
+    }
+}
 
 const registerUser = asyncHandler(async (req, res) => {
     //res.status(200).json({
@@ -34,13 +54,13 @@ const registerUser = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         message: "Detail posted sucessfully!!",
-        ObjectId:objectId,
-        Email:email,
-        Name:username,
-        Fullname:fullname,
-        Password:password,
-        watchHistory:watchHistory,
-        CoverImage:coverImage
+        ObjectId: objectId,
+        Email: email,
+        Name: username,
+        Fullname: fullname,
+        Password: password,
+        watchHistory: watchHistory,
+        CoverImage: coverImage
     })
 
     if (
@@ -56,6 +76,7 @@ const registerUser = asyncHandler(async (req, res) => {
     if (existedUser) {
         throw new ApiError(409, "User already exists!!")
     }
+    console.log("Files", eq.files)
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
     const coverImageLocalPath = req.files?.coverImage[0].path;
@@ -89,7 +110,78 @@ const registerUser = asyncHandler(async (req, res) => {
     return res.status(201).json(
         new ApiResponse(200, createdUser, "User registered sucessfully✅")
     )
-
 })
 
-export default registerUser;
+const loginUser = asyncHandler(async (req, res) => {
+    //Data from ---> request body
+    //username or email
+    //find the use
+    //If the user exists ---- Check password
+    //access and refresh token
+    //Send cookie
+
+    const { username, email, password } = req.body;
+    if (!username || !email) {
+        throw new ApiError(400, "Username or Email is required!!");
+    }
+
+    const user = await User.findOne({
+        $or: [{ username }, { email }]
+    })
+
+    if (!user) {
+        throw new ApiError(400, "User doesn't exist!!");
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+        throw new ApiError(401, "Invalid user credentials!! ")
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+    const loggedInUser = await User.findById(user._id)
+        .select("-password -refreshToken")
+
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
+    return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+            new ApiResponse(200, {
+                user: refreshToken, loggedInUser, accessToken
+            }, "User loggedin Sucessfully")
+        )
+})
+
+const logoutUser = asyncHandler(async (req, res) => {
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                refreshToken: undefined
+            }
+        },
+        {
+            new: true
+        }
+    )
+
+    const options = {
+        httpOnly:true,
+        secure: true
+    }
+
+        return res
+        .status(200)
+        .clearCookie("accessToken",options)
+        .clearCookie("refreshToken",options)
+        .json(new ApiResponse(200,{},"User logged Out"))
+})
+
+export default { registerUser, loginUser, logoutUser };
