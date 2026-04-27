@@ -1,6 +1,9 @@
 const http = require('http');
 
-function requestListener(req,res){
+let server = http.createServer((req,res) =>{
     console.log(req);
-}
-http.createServer(requestListener)
+});
+server.listen(3000,() =>{
+    console.log("Server listening on port: ",3000);
+    
+})
