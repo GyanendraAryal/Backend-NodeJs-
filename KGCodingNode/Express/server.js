@@ -9,8 +9,8 @@ server.use((req,res,next)=>{
   // res.send(`I'm the first Middleware`);
   next()
 })
-server.use((req,res,next)=>{
-  console.log(`I'm the second Middleware`);
+server.use("/blog",(req,res,next)=>{
+  console.log(`I'm the Blog Middleware`);
   // res.send(`I'm the first Middleware`);
   next()
 })
@@ -18,9 +18,9 @@ server.get('/', (req, res) => {
   res.send("Hello World, I'm Home page!!");
 });
 
-server.get('/blog',(req,res)=>{
+server.get('/blog',(req,res,next)=>{
   res.send(`I'm the Blog Page`);
-  
+  next()
 })
 // let server = http.createServer(app);
 server.listen(PORT,()=>{
